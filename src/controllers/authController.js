@@ -160,10 +160,6 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
-
-// const bcrypt = require("bcrypt");
-// const User = require("../models/User");
-
 exports.setPassword = async (req, res) => {
   try {
     const { email, password } = req.body;
