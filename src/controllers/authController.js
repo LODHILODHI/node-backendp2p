@@ -159,3 +159,33 @@ exports.resetPassword = async (req, res) => {
     res.status(500).json({ message: "Server error", error });
   }
 };
+
+
+// const bcrypt = require("bcrypt");
+// const User = require("../models/User");
+
+exports.setPassword = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
+
+    // Check if user is verified
+    const user = await User.findOne({ email });
+    if (!user || !user.isVerified) {
+      return res.status(400).json({ message: "Email is not verified" });
+    }
+
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Update user with password
+    await User.findOneAndUpdate({ email }, { password: hashedPassword });
+
+    res.status(200).json({ message: "Password set successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+};
